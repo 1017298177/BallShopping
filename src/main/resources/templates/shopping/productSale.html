@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+    <meta charset="UTF-8">
+    <link rel="shortcut icon" href="/shop/favicon.ico">
+    <link rel="stylesheet" href="/shop/css/iconfont.css">
+    <link rel="stylesheet" href="/shop/css/global.css">
+    <link rel="stylesheet" href="/shop/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/shop/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="/shop/css/swiper.min.css">
+    <link rel="stylesheet" href="/shop/css/styles.css">
+    <script src="/shop/js/jquery.1.12.4.min.js" charset="UTF-8"></script>
+    <script src="/shop/js/bootstrap.min.js" charset="UTF-8"></script>
+    <script src="/shop/js/swiper.min.js" charset="UTF-8"></script>
+    <script src="/shop/js/global.js" charset="UTF-8"></script>
+    <script src="/shop/js/jquery.DJMask.2.1.1.js" charset="UTF-8"></script>
+    <script src="/shop/js/jquery.zoom.js"></script>
+    <script src="/shop/js/jquery.magnifier.js"></script>
+    <title>球途网</title>
+</head>
+<body>
+<!-- 顶部tab -->
+<div th:replace="/shopping/fragments/header"></div>
+<!-- 顶部tab -->
+<!--搜索框-->
+<div th:replace="/shopping/common/search"></div>
+<!--搜索框-->
+
+<div class="content inner">
+    <section class="item-show__div item-show__head clearfix">
+        <div class="pull-left">
+            <ol class="breadcrumb">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="#" id="productType"></a></li>
+                <li class="active" id="productTitle1"></li>
+            </ol>
+            <div class="item-pic__box" id="magnifier">
+                <div class="small-box">
+                    <img class="cover" id="productMainImage">
+                    <!--                    <span class="hover"></span>-->
+                </div>
+                <div class="thumbnail-box">
+                    <a href="javascript:;" class="btn btn-default btn-prev"></a>
+                    <div class="thumb-list">
+                        <ul class="wrapper clearfix" id="imageList">
+                        </ul>
+                    </div>
+                    <a href="javascript:;" class="btn btn-default btn-next"></a>
+                </div>
+                <!--                <div class="big-box"><img id="productMainImageBig" alt="重回汉唐 旧忆 原创设计日常汉服女款绣花长褙子吊带改良宋裤春夏"></div>-->
+            </div>
+            <div class="item-info__box">
+                <div class="item-title">
+                    <div class="name ep2" id="productTitle"></div>
+                    <div class="sale cr">优惠活动：该商品享受8折优惠</div>
+                </div>
+                <div class="item-price bgf5">
+                    <div class="price-box clearfix">
+                        <div class="price-panel pull-left">
+                            <input type="hidden" id="hiddenProductPrice">
+                            售价：<span class="price" id="productPrice"></span>
+                        </div>
+                    </div>
+                </div>
+                <ul class="item-ind-panel clearfix">
+                    <li class="item-ind-item">
+                        <span class="ind-label c9">累计销量</span>
+                        <span class="ind-count cr">1688</span>
+                    </li>
+                    <li class="item-ind-item">
+                        <a href=""><span class="ind-label c9">累计评论</span>
+                            <span class="ind-count cr">1314</span></a>
+                    </li>
+                </ul>
+                <div class="item-key">
+                    <div class="item-sku">
+                        <dl class="item-prop clearfix">
+                            <dt class="item-metatit">颜色：</dt>
+                            <input type="hidden" id="hiddenProductId">
+                            <dd>
+                                <ul class="clearfix" id="colorImage">
+
+                                </ul>
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="item-amount clearfix bgf5">
+                        <div class="item-metatit">数量：</div>
+                        <div class="amount-box">
+                            <div class="amount-widget">
+                                <input class="amount-input" id="buyCount" value="1" maxlength="8" title="请输入购买量"
+                                       type="text">
+                                <div class="amount-btn">
+                                    <a class="amount-but add"></a>
+                                    <a class="amount-but sub"></a>
+                                </div>
+                            </div>
+                            <div class="item-stock"><span style="margin-left: 10px;">库存 <b id="Stock"></b> 件</span>
+                            </div>
+                            <script>
+                                $(function () {
+                                    $('.amount-input').onlyReg({reg: /[^0-9]/g});
+                                    var stock = parseInt($('#Stock').html());
+                                    $('.amount-widget').on('click', '.amount-but', function () {
+                                        var num = parseInt($('.amount-input').val());
+                                        if (!num) num = 0;
+                                        if ($(this).hasClass('add')) {
+                                            if (num > stock - 1) {
+                                                return DJMask.open({
+                                                    width: "300px",
+                                                    height: "100px",
+                                                    content: "您输入的数量超过库存上限"
+                                                });
+                                            }
+                                            $('.amount-input').val(num + 1);
+                                        } else if ($(this).hasClass('sub')) {
+                                            if (num == 1) {
+                                                return DJMask.open({
+                                                    width: "300px",
+                                                    height: "100px",
+                                                    content: "您输入的数量有误"
+                                                });
+                                            }
+                                            $('.amount-input').val(num - 1);
+                                        }
+                                    });
+                                });
+                            </script>
+                        </div>
+                    </div>
+                    <div class="item-action clearfix bgf5">
+                        <a href="javascript:;" rel="nofollow" data-addfastbuy="true" title="点击此按钮，到下一步确认购买信息。"
+                           role="button" class="item-action__buy">立即购买</a>
+                        <a href="javascript:;" onclick="joinShoppingCart()" rel="nofollow" data-addfastbuy="true"
+                           role="button" class="item-action__basket">
+                            <i class="iconfont icon-shopcart"></i> 加入购物车
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="pull-right picked-div">
+            <div class="lace-title">
+                <span class="c6">爆款推荐</span>
+            </div>
+            <div class="swiper-container picked-swiper">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                        <a class="picked-item" href="">
+                            <img src="/shop/images/temp/S-001-7_s.jpg" alt="" class="cover">
+                            <div class="look_price">¥134.99</div>
+                        </a>
+                        <a class="picked-item" href="">
+                            <img src="/shop/images/temp/S-001-8_s.jpg" alt="" class="cover">
+                            <div class="look_price">¥134.99</div>
+                        </a>
+                        <a class="picked-item" href="">
+                            <img src="/shop/images/temp/S-001-9_s.jpg" alt="" class="cover">
+                            <div class="look_price">¥134.99</div>
+                        </a>
+                    </div>
+                    <div class="swiper-slide">
+                        <a class="picked-item" href="">
+                            <img src="/shop/images/temp/S-001-3_s.jpg" alt="" class="cover">
+                            <div class="look_price">¥134.99</div>
+                        </a>
+                        <a class="picked-item" href="">
+                            <img src="/shop/images/temp/S-001-4_s.jpg" alt="" class="cover">
+                            <div class="look_price">¥134.99</div>
+                        </a>
+                        <a class="picked-item" href="">
+                            <img src="/shop/images/temp/S-001-5_s.jpg" alt="" class="cover">
+                            <div class="look_price">¥134.99</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="picked-button-prev"></div>
+            <div class="picked-button-next"></div>
+            <script>
+                $(document).ready(function () {
+                    // 顶部banner轮播
+                    var picked_swiper = new Swiper('.picked-swiper', {
+                        loop: true,
+                        direction: 'vertical',
+                        prevButton: '.picked-button-prev',
+                        nextButton: '.picked-button-next',
+                    });
+                });
+            </script>
+        </div>
+    </section>
+    <section class="item-show__div item-show__body posr clearfix">
+        <div class="item-nav-tabs">
+            <ul class="nav-tabs nav-pills clearfix" role="tablist" id="item-tabs">
+                <li role="presentation" class="active"><a href="#evaluate" role="tab" data-toggle="tab"
+                                                          aria-controls="evaluate" aria-expanded="true">累计评价 <span
+                        class="badge">1314</span></a></li>
+            </ul>
+        </div>
+        <div class="pull-left">
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane fade in active" id="evaluate" aria-labelledby="evaluate-tab">
+                    <div class="evaluate-content">
+                        <div class="tab-content">
+                            <div role="tabpanel" class="tab-pane fade in active" id="all" aria-labelledby="all-tab">
+
+                                <div class="eval-box">
+                                    <div class="eval-author">
+                                        <div class="port">
+                                            <img src="/shop/images/icons/default_avt.png" alt="欢迎来到球途网"
+                                                 class="cover b-r50">
+                                        </div>
+                                        <div class="name">高***恒</div>
+                                    </div>
+                                    <div class="eval-content">
+                                        <div class="eval-text">
+                                            真是特别美_回头穿了晒图
+                                        </div>
+                                        <div class="eval-imgs">
+                                            <div class="img-temp"><img src="/shop/images/temp/S-001-1_s.jpg"
+                                                                       data-src="/shop/images/temp/S-001-1_b.jpg"
+                                                                       data-action="zoom" class="cover"></div>
+                                            <div class="img-temp"><img src="/shop/images/temp/S-001-2_s.jpg"
+                                                                       data-src="/shop/images/temp/S-001-2_b.jpg"
+                                                                       data-action="zoom" class="cover"></div>
+                                            <div class="img-temp"><img src="/shop/images/temp/S-001-3_s.jpg"
+                                                                       data-src="/shop/images/temp/S-001-3_b.jpg"
+                                                                       data-action="zoom" class="cover"></div>
+                                            <div class="img-temp"><img src="/shop/images/temp/S-001-4_s.jpg"
+                                                                       data-src="/shop/images/temp/S-001-4_b.jpg"
+                                                                       data-action="zoom" class="cover"></div>
+                                            <div class="img-temp"><img src="/shop/images/temp/S-001-5_s.jpg"
+                                                                       data-src="/shop/images/temp/S-001-5_b.jpg"
+                                                                       data-action="zoom" class="cover"></div>
+                                        </div>
+                                        <div class="eval-time">
+                                            2017年08月11日 20:31 颜色分类：深棕色 尺码：均码
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- 分页 -->
+                                <div class="page text-center clearfix">
+                                    <a class="disabled">上一页</a>
+                                    <a class="select">1</a>
+                                    <a href="">2</a>
+                                    <a href="">3</a>
+                                    <a href="">4</a>
+                                    <a href="">5</a>
+                                    <a href="">6</a>
+                                    <a href="">7</a>
+                                    <a href="">8</a>
+                                    <a class="" href="">下一页</a>
+                                    <a class="disabled">1/60页</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="pull-right">
+            <div class="tab-content" id="descCate">
+                <div role="tabpanel" class="tab-pane fade in active" id="evaluate-tab" aria-labelledby="evaluate-tab">
+                    <div class="descCate-content posr bgf5">
+                        <div class="lace-title">
+                            <span class="c6">相关推荐</span>
+                        </div>
+                        <div class="picked-box">
+                            <a class="picked-item" href="">
+                                <img src="/shop/images/temp/S-001-1_s.jpg" class="cover">
+                                <div class="look_price">¥134.99</div>
+                            </a>
+                            <a class="picked-item" href="">
+                                <img src="/shop/images/temp/S-001-2_s.jpg" class="cover">
+                                <div class="look_price">¥134.99</div>
+                            </a>
+                            <a class="picked-item" href="">
+                                <img src="/shop/images/temp/S-001-3_s.jpg" class="cover">
+                                <div class="look_price">¥134.99</div>
+                            </a>
+                            <a class="picked-item" href="">
+                                <img src="/shop/images/temp/S-001-4_s.jpg" class="cover">
+                                <div class="look_price">¥134.99</div>
+                            </a>
+                            <a class="picked-item" href="">
+                                <img src="/shop/images/temp/S-001-5_s.jpg" class="cover">
+                                <div class="look_price">¥134.99</div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- 右侧菜单 -->
+<div th:replace="/shopping/fragments/right"></div>
+<!-- 右侧菜单 -->
+
+<!-- 底部信息 -->
+<div th:replace="/shopping/fragments/foot"></div>
+<!-- 底部信息 -->
+</body>
+<script>
+    $(document).ready(function () {
+        var recommends = new Swiper('.recommends-swiper', {
+            spaceBetween: 40,
+            autoplay: 5000,
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $('.to-top').toTop({position: false})
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        var recommends = new Swiper('.recommends-swiper', {
+            spaceBetween: 40,
+            autoplay: 5000,
+        });
+    });
+</script>
+<script th:inline="javascript">
+    $(document).ready(function () {
+        $('#descCate').smartFloat(0);
+        $('.dc-idsItem').click(function () {
+            $(this).addClass('selected').siblings().removeClass('selected');
+        });
+        $('#item-tabs a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+            $('#descCate #' + $(e.target).attr('aria-controls') + '-tab')
+                .addClass('in').addClass('active').siblings()
+                .removeClass('in').removeClass('active');
+        });
+    });
+    var productId;
+    $(function () {
+        productId = [[${productId}]];
+        $("#hiddenProductId").val([[${productId}]]);
+        initPage();
+    })
+
+    function initPage() {
+        $.ajax({
+            url: "/api/product/ballAndImg/" + $("#hiddenProductId").val(),
+            type: "get",
+            success: function (info) {
+                $("#productTitle").text(info.productTitle);
+                $("#productTitle1").text(info.productTitle);
+                $("#productType").text(info.productType);
+                $("#productPrice").html("￥" + info.productPrice + "&nbsp;&nbsp;<s class=\"fz16 c9\" >￥" + info.productMarketPrice + "</s>");
+                $("#hiddenProductPrice").val(info.productPrice);
+                $("#Stock").text(info.productStock);
+                $("#productMainImage").attr("src", info.productMainimage);
+                $("#productMainImageBig").attr("src", info.productMainimage);
+                $("#productMainImage2").attr("src", info.productMainimage);
+                var list = info.productImages;
+                $("#imageList").empty();
+                $("#colorImage").empty();
+                for (var i = 0; i < list.length + 1; i++) {
+                    if (i == 0) {
+                        $("#imageList").append("<li class='item active' data-src='" + info.productMainimage + "'  ><img class='cover' src='" + info.productMainimage + "'  alt='商品预览图'></li>")
+                        $("#colorImage").append(" <li><a href='javascript:;' onclick='changeImageUrl(\"" + info.productMainimage + "\",\"main\")'><img style='width: 40px;height: 40px' src='" + info.productMainimage + "'> </a></li>")
+                    } else {
+                        if (list[i - 1].productImageType == 0) {
+                            $("#imageList").append("<li class='item' data-src='" + list[i - 1].productImageUrl + "'  ><img class='cover' src='" + list[i - 1].productImageUrl + "'  alt='商品预览图'></li>")
+                        }
+                        if (list[i - 1].productImageType == 1) {
+                            $("#colorImage").append(" <li><a href='javascript:;' onclick='changeImageUrl(\"" + list[i - 1].productImageUrl + "\")'><img style='width: 40px;height: 40px' src='" + list[i - 1].productImageUrl + "'> </a></li>")
+                        }
+                    }
+                }
+                $('#magnifier').magnifier();
+            }
+        })
+    }
+
+    function changeImageUrl(url,flag) {
+        $("#productMainImage").attr("src", url);
+        if(flag!="main"){
+            $("#hiddenProductId").val("");
+        }else {
+            $("#hiddenProductId").val(productId)
+        }
+    }
+
+
+    function joinShoppingCart() {
+        var shoppingCart = {};
+        var imgUrl = $("#productMainImage").prop("src");
+        shoppingCart.productMainId = productId;
+        shoppingCart.productNumber = $("#buyCount").val();
+        shoppingCart.productId = $("#hiddenProductId").val();
+        shoppingCart.productTitle = $("#productTitle").text();
+        shoppingCart.productPrice = $("#hiddenProductPrice").val();
+        shoppingCart.productMainimage = imgUrl.substring(21, imgUrl.length);
+        shoppingCart.productType = $("#productType").text();
+        $.ajax({
+            url: "/api/shoppingCart",
+            type: "post",
+            data: JSON.stringify(shoppingCart),
+            contentType: "application/json",
+            success: function (info) {
+                if (info.status == 200) {
+                     location.href="/shopping/shoppingCart";
+                } else {
+                    layer.alert(info.message, {icon: 0, time: 500})
+                }
+            }
+        })
+    }
+</script>
+</html>

@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="shortcut icon" href="/shop/favicon.ico">
+    <link rel="stylesheet" href="/shop/css/iconfont.css">
+    <link rel="stylesheet" href="/shop/css/global.css">
+    <link rel="stylesheet" href="/shop/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/shop/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="/shop/css/swiper.min.css">
+    <link rel="stylesheet" href="/shop/css/styles.css">
+    <script src="/shop/js/jquery.1.12.4.min.js" charset="UTF-8"></script>
+    <script src="/shop/js/bootstrap.min.js" charset="UTF-8"></script>
+    <script src="/shop/js/swiper.min.js" charset="UTF-8"></script>
+    <script src="/shop/js/global.js" charset="UTF-8"></script>
+    <script src="/shop/js/jquery.DJMask.2.1.1.js" charset="UTF-8"></script>
+    <title>球途网</title>
+</head>
+<body>
+<!-- 顶部tab -->
+<div th:replace="/shopping/fragments/header"></div>
+<!-- 顶部tab -->
+
+<!-- 搜索栏 -->
+<div class="top-search">
+    <div class="inner">
+        <a class="logo" href="/shopping/index"><img style="width: 200px;height: 70px;margin-top: 25px" src="/shop/images/icons/logo.jpg" alt="球途网" class="cover"></a>
+        <div class="search-box">
+            <form class="input-group">
+                <input placeholder="Ta们都在搜球途" type="text">
+                <span class="input-group-btn">
+						<button type="button">
+							<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+						</button>
+					</span>
+            </form>
+            <p class="help-block text-nowrap">
+                <a href="">篮球</a>
+                <a href="">足球</a>
+            </p>
+        </div>
+        <div class="cart-box">
+            <a href="/shopping/shoppingCart" class="cart-but">
+                <i class="iconfont icon-shopcart cr fz16"></i> 购物车
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- 首页导航栏 -->
+<div class="top-nav bg3">
+    <div class="nav-box inner">
+        <div class="all-cat">
+            <div class="title"><i class="iconfont icon-menu"></i> 全部分类</div>
+            <div class="cat-list__box">
+                <div class="cat-box">
+                    <div class="title">
+                       <a href="#"  style="font-size: 18px;color: white; letter-spacing: 4px"><i ><img src="/shop/icon/basketBall.png"></i>&nbsp;篮球</a>
+                    </div>
+                </div>
+                <div class="cat-box">
+                    <div class="title">
+                        <a href="#"  style="font-size: 18px;color: white;letter-spacing: 4px"><i ><img src="/shop/icon/footBall.png"></i>&nbsp;足球</a>
+                    </div>
+                </div>
+                <div class="cat-box">
+                    <div class="title">
+                        <a href="#"  style="font-size: 18px;color: white;letter-spacing: 4px"><i ><img src="/shop/icon/volleyBall.png"></i>&nbsp;排球</a>
+                    </div>
+                </div>
+                <div class="cat-box">
+                    <div class="title">
+                        <a href="#" style="font-size: 18px;color: white;letter-spacing: 4px"><i ><img src="/shop/icon/tennis.png"></i>&nbsp;网球</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <ul class="nva-list">
+            <a href="index.html">
+                <li class="active">首页</li>
+            </a>
+        </ul>
+
+
+        <div class="user-info__box">
+            <div class="login-box">
+                <div class="avt-port">
+                    <img th:src="${userInfo != null ?userInfo.userImage:'/upload/user.jpg'}" alt="欢迎来到球途网" class="cover b-r50">
+                </div>
+                <!-- 已登录 -->
+                <div class="name c6" shiro:authenticated="">Hi~ <span shiro:principal property="realName" class="cr"></span></div>
+                <div class="name c6" shiro:authenticated="">~你好</div>
+                <!-- 未登录 -->
+                <div class="name c6" shiro:notAuthenticated="">Hi~ 你好</div>
+
+                <div class="point c6" shiro:notAuthenticated=""><a href="/shopping/login">点此登录</a>，发现更多精彩</div>
+
+            </div>
+            <div class="agent-box">
+                <a href="#" class="agent">
+                    <i class="iconfont icon-fushi"></i>
+                    <p>申请网店代销</p>
+                </a>
+                <a href="javascript:;" class="agent">
+                    <i class="iconfont icon-agent"></i>
+                    <p><span class="cr">9527</span>位用户</p>
+                </a>
+            </div>
+            <div class="verify-qq">
+                <div class="title">
+                    <i class="fake"></i>
+                    <span class="fz12">真假QQ客服验证-远离骗子</span>
+                </div>
+                <form class="input-group">
+                    <input class="form-control" placeholder="输入客服QQ号码" type="text">
+                    <span class="input-group-btn">
+							<button class="btn btn-primary submit" id="verifyqq" type="button">验证</button>
+						</span>
+                </form>
+                <script>
+                    $(function () {
+                        $('#verifyqq').click(function () {
+                            DJMask.open({
+                                width: "400px",
+                                height: "150px",
+                                title: "U袋网提示您：",
+                                content: "<b>该QQ不是客服-谨防受骗！</b>"
+                            });
+                        });
+                    });
+                </script>
+            </div>
+            <div class="tags">
+                <div class="tag"><i class="iconfont icon-real fz16"></i> 品牌正品</div>
+                <div class="tag"><i class="iconfont icon-credit fz16"></i> 信誉认证</div>
+                <div class="tag"><i class="iconfont icon-speed fz16"></i> 当天发货</div>
+                <div class="tag"><i class="iconfont icon-tick fz16"></i> 人工质检</div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 顶部轮播 -->
+<div class="swiper-container banner-box">
+    <div class="swiper-wrapper">
+        <div class="swiper-slide"><a href="item_show.html"><img src="/upload/2.jpg" class="cover"></a></div>
+        <div class="swiper-slide"><a href="item_show.html"><img src="/upload/1.jpg" class="cover"></a></div>
+        <div class="swiper-slide"><a href="item_category.html"><img src="/upload/3.jpg" class="cover"></a></div>
+        <div class="swiper-slide"><a href="item_show.html"><img src="/upload/4.jpg" class="cover"></a></div>
+        <div class="swiper-slide"><a href="item_sale_page.html"><img src="/upload/5.jpg" class="cover"></a></div>
+    </div>
+    <div class="swiper-pagination"></div>
+</div>
+<!-- 顶部轮播 -->
+
+
+
+<!-- 首页楼层导航 -->
+<nav class="floor-nav visible-lg-block">
+    <span class="scroll-nav">网球</span>
+    <span class="scroll-nav">篮球</span>
+    <span class="scroll-nav">足球</span>
+    <span class="scroll-nav">排球</span>
+</nav>
+<!-- 首页楼层导航 -->
+
+
+
+<!-- 楼层内容 -->
+<div class="content inner" style="margin-bottom: 40px;">
+    <section class="scroll-floor floor-1 clearfix">
+        <div class="pull-left">
+            <div class="floor-title">
+                <i class="iconfont icon-tuijian fz16"></i> 网球
+                <a href="" class="more"><i class="iconfont icon-more"></i></a>
+            </div>
+            <div class="con-box">
+                <a class="left-img hot-img" href="">
+                    <img src="/upload/tennis.jpg" alt="" class="cover">
+                </a>
+                <div class="right-box hot-box" id="tennisList">
+
+                </div>
+            </div>
+        </div>
+        <div class="pull-right">
+            <div class="floor-title">
+                <i class="iconfont icon-horn fz16"></i> 平台公告
+                <a href="#" class="more"><i class="iconfont icon-more"></i></a>
+            </div>
+            <div class="con-box">
+                <div class="notice-box bgf5">
+                    <div class="swiper-container">
+                        <div class="swiper-wrapper">
+                            <a class="swiper-slide ep" href="udai_notice.html">【公告】U袋网平台已上线，您还在等什么呢？是吧~</a>
+                            <a class="swiper-slide ep" href="udai_notice.html">【资讯】P站服务器爆炸啦。国内86%地区IP被限制~</a>
+                            <a class="swiper-slide ep" href="udai_notice.html">【公告】六趣公司9月底将彻底关闭66RPG论坛~</a>
+                            <a class="swiper-slide ep" href="udai_notice.html">【资讯】Project1站将接盘66RPG，新域名rpg.blue</a>
+                            <a class="swiper-slide ep" href="udai_notice.html">【新闻】央行决定对普惠金融实施定向降准政策 最高下调1.5个百分点</a>
+                            <a class="swiper-slide ep" href="udai_notice.html">【新闻】那些年看的剧里十大虐心情节，谁戳中了你的泪点？</a>
+                            <a class="swiper-slide ep" href="udai_notice.html">【新闻】惨遭魔改？派拉蒙将拍真人版《你的名字。》</a>
+                            <a class="swiper-slide ep" href="udai_notice.html">【新闻】外媒称中国限制日本跟团游?旅行社:仍正常发团</a>
+                            <a class="swiper-slide ep" href="udai_notice.html">【新闻】广电总局：电台电视台应在重要法定节日播放国歌</a>
+                            <a class="swiper-slide ep" href="udai_notice.html">【新闻】高校性教育课成"爆款" 老师都讲哪些"大尺度"内容?</a>
+                            <a class="swiper-slide ep" href="udai_notice.html">【新闻】vivo X20全面屏手机首销火爆 陈赫欧豪现身助力</a>
+                            <a class="swiper-slide ep" href="udai_notice.html">【新闻】“拒绝妻子手术”现场医生：病人丈夫被冤枉了</a>
+                            <a class="swiper-slide ep" href="udai_notice.html">【新闻】游客们注意了！国庆你要避开十大坑</a>
+                            <a class="swiper-slide ep" href="udai_notice.html">【新闻】他卖了1.5万双假货，现在面临10年牢狱！</a>
+                            <a class="swiper-slide ep" href="udai_notice.html">【新闻】10月1日起国家再次提高部分优抚对象抚恤补助标准
+                                烈属抚恤每年23130元</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="buts-box bgf5">
+                    <div class="but-div">
+                        <a href="">
+                            <i class="but-icon"></i>
+                            <p>物流查询</p>
+                        </a>
+                    </div>
+                    <div class="but-div">
+                        <a href="item_sale_page.html">
+                            <i class="but-icon"></i>
+                            <p>热卖专区</p>
+                        </a>
+                    </div>
+                    <div class="but-div">
+                        <a href="item_sale_page.html">
+                            <i class="but-icon"></i>
+                            <p>满减专区</p>
+                        </a>
+                    </div>
+                    <div class="but-div">
+                        <a href="item_sale_page.html">
+                            <i class="but-icon"></i>
+                            <p>折扣专区</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <section class="scroll-floor floor-2">
+        <div class="floor-title">
+            <i ><img src="/shop/icon/basketBall.png"></i> 篮球
+            <div class="case-list fz0 pull-right">
+                <a href="/shopping/show/basketballShow">更多...</a>
+            </div>
+        </div>
+
+        <div class="con-box">
+            <a class="left-img hot-img" href="/shopping/show/basketballShow">
+                <img src="/upload/basketball.jpg" alt="" class="cover">
+            </a>
+            <div class="right-box" id="basketBallList">
+            </div>
+        </div>
+    </section>
+
+    <section class="scroll-floor floor-2">
+        <div class="floor-title">
+            <i ><img src="/shop/icon/basketBall.png"></i> 足球
+            <div class="case-list fz0 pull-right">
+                <a href="/shopping/show/footballShow">更多...</a>
+            </div>
+        </div>
+
+        <div class="con-box">
+            <a class="left-img hot-img" href="/shopping/show/footballShow">
+                <img src="/upload/football.jpg" alt="" class="cover">
+            </a>
+            <div class="right-box" id="footBallList">
+            </div>
+        </div>
+    </section>
+    <section class="scroll-floor floor-2">
+        <div class="floor-title">
+            <i ><img src="/shop/icon/basketBall.png"></i> 排球
+            <div class="case-list fz0 pull-right">
+                <a href="/shopping/show/VolleyballShow">更多...</a>
+            </div>
+        </div>
+
+        <div class="con-box">
+            <a class="left-img hot-img" href="/shopping/show/VolleyballShow">
+                <img src="/upload/volleyball.jpg" alt="" class="cover">
+            </a>
+            <div class="right-box" id="volleyballList">
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<!-- 右侧菜单 -->
+<div th:replace="/shopping/fragments/right"></div>
+<!-- 右侧菜单 -->
+
+<!-- 底部信息 -->
+<div th:replace="/shopping/fragments/foot"></div>
+<!-- 底部信息 -->
+</body>
+
+<script>
+
+    $(function () {
+        tennis();
+        basketBall();
+        football();
+        volleyball();
+    })
+    
+    function tennis() {
+        $.ajax({
+            url:"/api/product/tennis",
+            type:"get",
+            success:function (info) {
+                var html = "";
+                $.each(info,function (i,list) {
+                    html +=" <a href='/api/ball/"+list.productId+"' class=\"floor-item\">\n" +
+                        "<div class=\"item-img hot-img\">\n" +
+                        "<img src='"+list.productMainimage+"'  class=\"cover\">\n" +
+                        "</div>\n" +
+                        "<div class=\"price clearfix\">\n" +
+                        "<span class=\"pull-left cr fz16\">￥"+list.productPrice+"</span>\n" +
+                        "<span class=\"pull-right c6\">进货价</span>\n" +
+                        "</div>\n" +
+                        "<div class=\"name ep\" title=\""+list.productTitle+"\">"+list.productTitle+"</div>\n" +
+                        "</a>";
+                })
+                $("#tennisList").html(html);
+            }
+        })
+    }
+    
+    function volleyball() {
+        $.ajax({
+            url:"/api/product/volleyBall",
+            type:"get",
+            success:function (info) {
+                var html = "";
+                $.each(info,function (i,list) {
+                    html +=" <a href='/api/ball/"+list.productId+"' class=\"floor-item\">\n" +
+                        "<div class=\"item-img hot-img\">\n" +
+                        "<img src='"+list.productMainimage+"'  class=\"cover\">\n" +
+                        "</div>\n" +
+                        "<div class=\"price clearfix\">\n" +
+                        "<span class=\"pull-left cr fz16\">￥"+list.productPrice+"</span>\n" +
+                        "<span class=\"pull-right c6\">进货价</span>\n" +
+                        "</div>\n" +
+                        "<div class=\"name ep\" title=\""+list.productTitle+"\">"+list.productTitle+"</div>\n" +
+                        "</a>";
+                })
+                $("#volleyballList").html(html);
+            }
+        })
+    }
+
+    function football() {
+        $.ajax({
+            url:"/api/product/footBall",
+            type:"get",
+            success:function (info) {
+                var html = "";
+                $.each(info,function (i,list) {
+                    html +=" <a href='/api/ball/"+list.productId+"' class=\"floor-item\">\n" +
+                        "<div class=\"item-img hot-img\">\n" +
+                        "<img src='"+list.productMainimage+"'  class=\"cover\">\n" +
+                        "</div>\n" +
+                        "<div class=\"price clearfix\">\n" +
+                        "<span class=\"pull-left cr fz16\">￥"+list.productPrice+"</span>\n" +
+                        "<span class=\"pull-right c6\">进货价</span>\n" +
+                        "</div>\n" +
+                        "<div class=\"name ep\" title=\""+list.productTitle+"\">"+list.productTitle+"</div>\n" +
+                        "</a>";
+                })
+                $("#footBallList").html(html);
+            }
+        })
+    }
+    
+    function basketBall(){
+        $.ajax({
+            url:"/api/product/basketBall",
+            type:"get",
+            success:function (info) {
+                var html = "";
+                $.each(info,function (i,list) {
+                   html +=" <a href='/api/ball/"+list.productId+"' class=\"floor-item\">\n" +
+                       "<div class=\"item-img hot-img\">\n" +
+                       "<img src='"+list.productMainimage+"'  class=\"cover\">\n" +
+                       "</div>\n" +
+                       "<div class=\"price clearfix\">\n" +
+                       "<span class=\"pull-left cr fz16\">￥"+list.productPrice+"</span>\n" +
+                       "<span class=\"pull-right c6\">进货价</span>\n" +
+                       "</div>\n" +
+                       "<div class=\"name ep\" title=\""+list.productTitle+"\">"+list.productTitle+"</div>\n" +
+                       "</a>";
+                })
+                $("#basketBallList").html(html);
+            }
+        })
+    }
+
+
+
+
+
+
+
+
+    $(document).ready(function () {
+        // 顶部banner轮播
+        var banner_swiper = new Swiper('.banner-box', {
+            autoplayDisableOnInteraction: false,
+            pagination: '.banner-box .swiper-pagination',
+            paginationClickable: true,
+            autoplay: 2000,
+        });
+        // 新闻列表滚动
+        var notice_swiper = new Swiper('.notice-box .swiper-container', {
+            paginationClickable: true,
+            mousewheelControl: true,
+            direction: 'vertical',
+            slidesPerView: 10,
+            autoplay: 2e3,
+        });
+        // 楼层导航自动 active
+        $.scrollFloor();
+        // 页面下拉固定楼层导航
+        $('.floor-nav').smartFloat();
+        $('.to-top').toTop({position: false});
+    });
+
+</script>
+
+</html>

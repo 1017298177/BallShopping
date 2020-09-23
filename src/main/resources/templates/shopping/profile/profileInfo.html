@@ -1,0 +1,107 @@
+<div class="pull-right">
+    <div class="user-content__box clearfix bgf">
+        <div class="title">账户信息-个人资料</div>
+        <div class="port b-r50" id="crop-avatar">
+            <div  class="img"><img id="image"  src="/shop/images/icons/default_avt.png" class="cover b-r50"></div>
+            <a style="font-size: 12px;color: grey" id="editImage">上传您的头像</a>
+        </div>
+        <form action="" class="user-setting__form" role="form">
+            <input type="hidden" id="userId">
+            <div class="user-form-group">
+                <label >用户名：</label>
+                <input type="text" id="userName"  placeholder="请输入您的用户名">
+            </div>
+            <div class="user-form-group">
+                <label>性别：</label>
+                <label><input type="radio" name="man" value="男"><i class="iconfont icon-radio"></i> 男士</label>
+                <label><input type="radio" name="woman" value="女"><i class="iconfont icon-radio"></i> 女士</label>
+            </div>
+            <div class="user-form-group">
+                <label >电话：</label>
+                <input type="text" id="phone"  placeholder="请输入您的电话号码">
+            </div>
+            <div class="user-form-group">
+                <label >邮箱：</label>
+                <input type="text" id="email"  placeholder="请输入您的邮箱">
+            </div>
+            <div class="user-form-group">
+                <button type="button" onclick="saveUserInfo()" class="btn">确认修改</button>
+            </div>
+        </form>
+        <script src="/shop/js/zebra.datepicker.min.js"></script>
+        <link rel="stylesheet" href="/shop/css/zebra.datepicker.css">
+        <script>
+            $('input.datepicker').Zebra_DatePicker({
+                default_position: 'below',
+                show_clear_date: false,
+                show_select_today: false,
+            });
+        </script>
+    </div>
+</div>
+<script>
+
+    $(function () {
+        initUser();
+    })
+
+layui.use(['upload'], function(){
+      var upload = layui.upload;
+         //文件上传
+         var uploadInst = upload.render({
+         //绑定元素
+         elem: '#editImage',
+         // 上传接口
+         url: "/api/productImg",
+         accept:'file',
+         type:"post",
+         multiple:true,
+         done: function(rs){
+            $("#image").attr("src",rs.data)
+          }
+           });
+        });
+    function initUser() {
+        $.ajax({
+            url:"/api/userInfo",
+            type:"get",
+            success:function (rs) {
+                $("#userId").val(rs.userId);
+                $("#userName").val(rs.userName);
+                if(rs.sex=='男'){
+                    $("input[name='man']").prop("checked",true);
+                }else {
+                    $("input[name='woman']").prop("checked",true);
+                }
+               $("#phone").val(rs.telPhone);
+               $("#email").val(rs.email);
+               $("#image").attr("src",rs.userImage);
+            }
+        })
+    }
+
+    function saveUserInfo() {
+        var userInfo = {};
+        userInfo.userId = $("#userId").val();
+        userInfo.userName = $("#userName").val();
+        userInfo.sex =$("input[type='radio']").val();
+        userInfo.telPhone = $("#phone").val();
+        userInfo.email = $("#email").val();
+        userInfo.userImage = $("#image").attr("src");
+        $.ajax({
+            url:"/api/updateUserInfo",
+            type:"post",
+            contentType:"application/json",
+            data:JSON.stringify(userInfo),
+            success:function (rs) {
+               if(rs.status == 200){
+                   layer.msg(rs.message,{icon:1,time:500});
+                   setTimeout(function () {
+                       initUser();
+                   },500)
+               }
+            }
+        })
+    }
+</script>
+

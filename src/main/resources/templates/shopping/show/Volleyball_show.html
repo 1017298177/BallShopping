@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+    <meta charset="UTF-8">
+    <link rel="shortcut icon" href="/shop/favicon.ico">
+    <link rel="stylesheet" href="/shop/css/iconfont.css">
+    <link rel="stylesheet" href="/shop/css/global.css">
+    <link rel="stylesheet" href="/shop/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/shop/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="/shop/css/swiper.min.css">
+    <link rel="stylesheet" href="/shop/css/styles.css">
+    <script src="/shop/js/jquery.1.12.4.min.js" charset="UTF-8"></script>
+    <script src="/shop/js/bootstrap.min.js" charset="UTF-8"></script>
+    <script src="/shop/js/swiper.min.js" charset="UTF-8"></script>
+    <script src="/shop/js/global.js" charset="UTF-8"></script>
+    <script src="/shop/js/jquery.DJMask.2.1.1.js" charset="UTF-8"></script>
+    <title>U袋网</title>
+</head>
+<body>
+<!-- 顶部tab -->
+<div th:replace="/shopping/fragments/header"></div>
+<!-- 顶部tab -->
+<!--搜索框-->
+<div th:replace="/shopping/common/search"></div>
+<!--搜索框-->
+
+
+<div class="content inner">
+    <section class="filter-section clearfix">
+        <ol class="breadcrumb">
+            <li><a href="index.html">首页</a></li>
+            <li class="active">篮球专区</li>
+        </ol>
+        <div class="filter-box">
+            <div class="all-filter">
+                <div class="filter-value">
+                    <a href="" class="sale-title active">篮球专区</a>
+                </div>
+            </div>
+        </div>
+        <div class="sort-box bgf5">
+            <div class="sort-text">排序：</div>
+            <a href=""><div class="sort-text">销量 <i class="iconfont icon-sortDown"></i></div></a>
+            <a href=""><div class="sort-text">评价 <i class="iconfont icon-sortUp"></i></div></a>
+            <a href=""><div class="sort-text">价格 <i class="iconfont"></i></div></a>
+            <div class="sort-total pull-right">共1688个商品</div>
+        </div>
+    </section>
+    <section class="item-show__div clearfix">
+        <div class="pull-left">
+            <div class="item-list__area clearfix">
+
+
+                <div class="item-card">
+                    <a href="item_show.html" class="photo">
+                        <img src="/shop/images/temp/M-020.jpg" alt="白鹭行原创传统日常汉服男装绣花短褙子百搭外套单品春夏" class="cover">
+                        <div class="name">白鹭行原创传统日常汉服男装绣花短褙子百搭外套单品春夏</div></a>
+                    <div class="middle">
+                        <div class="price"><small>￥</small>18.0</div>
+                        <div class="sale"><a href="">加入购物车</a></div>
+                    </div>
+                    <div class="buttom">
+                        <div>销量 <b>666</b></div>
+                        <div>人气 <b>888</b></div>
+                        <div>评论 <b>1688</b></div>
+                    </div>
+                </div>
+            </div>
+            <!-- 分页 -->
+            <div class="page text-right clearfix">
+                <a class="disabled">上一页</a>
+                <a class="select">1</a>
+                <a href="">2</a>
+                <a href="">3</a>
+                <a href="">4</a>
+                <a href="">5</a>
+                <a class="" href="">下一页</a>
+                <a class="disabled">1/5页</a>
+                <form action="" class="page-order">
+                    到第
+                    <input type="text" name="page">
+                    页
+                    <input class="sub" type="submit" value="确定">
+                </form>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- 右侧菜单 -->
+<div th:replace="/shopping/fragments/right"></div>
+<!-- 右侧菜单 -->
+
+<!-- 底部信息 -->
+<div th:replace="/shopping/fragments/foot"></div>
+<!-- 底部信息 -->
+</body>
+<script>
+    $(document).ready(function(){ $('.to-top').toTop({position:false}) });
+</script>
+</html>

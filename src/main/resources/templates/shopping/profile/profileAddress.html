@@ -1,0 +1,95 @@
+<div class="pull-right">
+    <div class="user-content__box clearfix bgf">
+        <div class="title">收货地址信息</div>
+        <p class="fz18 cr"><a href="/shopping/profile/profileAddressAdd" class="btn btn-sm btn-success">新增</a></p>
+        <div class="table-thead addr-thead">
+            <div class="tdf1">收货人</div>
+            <div class="tdf2">所在地</div>
+            <div class="tdf3">
+                <div class="tdt-a_l">详细地址</div>
+            </div>
+            <div class="tdf1">手机</div>
+            <div class="tdf1">操作</div>
+            <div class="tdf1"></div>
+        </div>
+        <div class="addr-list" id="addressList">
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+        initAddressInfo();
+    })
+
+    function initAddressInfo() {
+        $.ajax({
+            url: "/api/addressInfos",
+            type: "get",
+            success: function (data) {
+                var html = "";
+                for (var i = 0; i < data.length; i++) {
+                    html += " <div class=\"addr-item\">\n" +
+                        "<div class=\"tdf1\">" + data[i].receiverName + "</div>\n" +
+                        "<div class=\"tdf2 \">" + data[i].province + data[i].city + "</div>\n" +
+                        "<div class=\"tdf3 tdt-a_l\">" + data[i].address + "</div>\n" +
+                        "<div class=\"tdf1\">" + data[i].telPhone + "</div>\n" +
+                        "<div class=\"tdf1 order\">\n" +
+                        "<a href=\"/shopping/profile/profileAddressEdit?addressId='" + data[i].addressId + "'\" >修改</a><a href='javascript:;' onclick='deleteAddress(\"" + data[i].addressId + "\")'>删除</a>\n" +
+                        "</div>\n" +
+                    "<div class=\"tdf1\">\n" +
+                    "<button value='"+data[i].status+"' onclick=\"updateAddressStatus('"+data[i].addressId+"')\"  name='addressCheckBox'  ></button>"+
+                    "</div>\n" +
+                    "</div>";
+                }
+                $("#addressList").html(html);
+                var btns = $("[name='addressCheckBox']");
+                for (var i = 0; i < btns.length; i++) {
+                    var value = btns.eq(i).val();
+                   if( value == 1) {
+                      btns.eq(i).text("默认地址");
+                      btns.eq(i).prop("class","default active");
+                       btns.eq(i).removeAttr("onclick");
+                   }else {
+                       btns.eq(i).text("设为默认");
+                       btns.eq(i).prop("class","default");
+                   }
+                }
+
+            }
+        })
+    }
+
+    function updateAddressStatus(addressId) {
+        layer.confirm('确认要修改吗？', function (index) {
+            $.ajax({
+                url: "/api/addressInfo/" + addressId,
+                type: "put",
+                success: function (rs) {
+                    if (rs.status == 200) {
+                        layer.msg(rs.message, {icon: 1, time: 500});
+                        setTimeout(function () {
+                            initAddressInfo();
+                        }, 500)
+                    }
+                }
+            })
+        });
+    }
+
+    function deleteAddress(addressId) {
+        layer.confirm('确认要删除吗？', function (index) {
+            $.ajax({
+                url: "/api/addressInfo/" + addressId,
+                type: "delete",
+                success: function (rs) {
+                    if (rs.status == 200) {
+                        layer.msg(rs.message, {icon: 1, time: 500});
+                        setTimeout(function () {
+                            initAddressInfo();
+                        }, 500)
+                    }
+                }
+            })
+        });
+    }
+</script>

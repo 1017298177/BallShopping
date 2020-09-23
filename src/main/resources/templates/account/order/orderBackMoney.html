@@ -1,0 +1,211 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link href="/assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/style.css"/>
+    <link href="/assets/css/codemirror.css" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/ace.min.css" />
+    <link rel="stylesheet" href="/font/css/font-awesome.min.css" />
+    <script src="/js/jquery-1.9.1.min.js"></script>
+    <script src="/assets/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/js/H-ui.js"></script>
+    <script src="/assets/js/typeahead-bs2.min.js"></script>
+    <script src="/assets/js/jquery.dataTables.min.js"></script>
+    <script src="/assets/js/jquery.dataTables.bootstrap.js"></script>
+    <script src="/assets/layer/layer.js" type="text/javascript" ></script>
+    <script src="/assets/laydate/laydate.js" type="text/javascript"></script>
+    <script src="/assets/js/jquery.easy-pie-chart.min.js"></script>
+    <script src="/js/lrtk.js" type="text/javascript" ></script>
+    <title>订单管理</title>
+    <style>
+        #sample-table_paginate a{
+            padding: 7px;
+        }
+        #sample-table_paginate a:hover{
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+<div class="page-content clearfix">
+    <div id="Member_Ratings">
+        <div class="d_Confirm_Order_style">
+            <div class="table_menu_list">
+                <table class="table table-striped table-bordered table-hover" id="sample-table">
+                    <thead>
+                    <tr>
+                        <th >订单编号</th>
+                        <th >下单时间</th>
+                        <th >收货地</th>
+                        <th >总价</th>
+                        <th >所属类型</th>
+                        <th >数量</th>
+                        <th >状态</th>
+                        <th >操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+<script>
+    jQuery(function($) {
+        initOrderBackMoneyList(10);
+        $('[data-rel="tooltip"]').tooltip({placement: tooltip_placement});
+        function tooltip_placement(context, source) {
+            var $source = $(source);
+            var $parent = $source.closest('table')
+            var off1 = $parent.offset();
+            var w1 = $parent.width();
+            var off2 = $source.offset();
+            var w2 = $source.width();
+            if( parseInt(off2.left) < parseInt(off1.left) + parseInt(w1 / 2) ) return 'right';
+            return 'left';
+        }
+    })
+
+
+
+    function initOrderBackMoneyList(pageSize) {
+
+        $('#sample-table').DataTable( {
+            'paging': true, //分页
+            "serverSide": true, //开启后端分页
+            "pagingType": "full_numbers", //分页样式的类型simple/simple_numbers/full/full_numbers
+            "pageLength": pageSize, //定义初始的页长
+            "processing": true,
+            "destroy": true, //允许销毁替换，在表格重新查询时，可以自动销毁以前的data
+            'lengthChange': true, //控制是否能够调整每页的条数
+            'searching': true,
+            'data-show-refresh': true,
+            'ordering': true,
+            'autoWidth': false,
+            "ajax": function (data, callback, settings) {
+                // 从data获取查询数据
+                var columIndex = data.order[0].column;
+                var sort = data.order[0].dir;
+                var orderBy = data.columns[columIndex].name;
+                pageSize = data.length == undefined  ? pageSize : data.length;
+                var searchVo = {};
+                searchVo.currentPage = (data.start / pageSize) + 1;
+                searchVo.pageSize = pageSize;
+                searchVo.orderBy = orderBy;
+                searchVo.sort = sort;
+                searchVo.keyWord = data.search.value;
+
+                $.ajax({
+                    url:"/api/orders/backMoney",
+                    contentType:"application/json",
+                    type:"post",
+                    data:JSON.stringify(searchVo),
+                    success : function (rs) {
+                        var fData = {
+                            draw :0,
+                            recordsTotal: 0,
+                            recordsFiltered: 0,
+                            data: []
+                        };
+                        if (!rs) {
+                            layer.alert("请求出错，请稍后重试" + rs.errmsg, {icon: 2});
+                            callback(fData);
+                            return;
+                        };
+                        if (rs.list == null) {
+                            $('#sample-table tbody tr').remove();
+                            $('#loading').remove();
+                            callback(fData);
+                            return;
+                        }
+                        $('#loading').remove();
+                        var gearDatas = [];
+                        for (var i = 0; i < rs.list.length; i++) {
+                            //包装行数据
+                            var rowData = new TData(rs.list[i].orderId,rs.list[i].orderNumber, rs.list[i].orderTradingTimeDetail, rs.list[i].orderTradingTimeYear,rs.list[i].orderProvince,
+                                rs.list[i].orderProductTotalPrice, rs.list[i].orderProductType,rs.list[i].orderProductNumbers,rs.list[i].orderStatus);
+                            // 将行数据放到数组里
+                            gearDatas.push(rowData);
+                        }
+                        fData.data = gearDatas;
+                        fData.recordsTotal = rs.total;
+                        fData.recordsFiltered = rs.total;
+                        callback(fData);
+                    },
+                    error : function (data) {
+                        layer.alert(data.responseText, {icon: 0});
+                    }
+                });
+            },
+            "columns": [ //定义行数据字段
+                {data: 'orderNumber', name: "order_number", sortable: true},
+                {data: 'orderTime'},
+                {data: 'orderProvince', name: "order_province"},
+                {data: 'orderProductTotalPrice', name: "order_product_total_price"},
+                {data: 'orderProductType', name: "order_product_type"},
+                {data: 'orderProductNumbers', name: "order_product_numbers"},
+                {data: 'orderStatus', name: "order_status"},
+                {data: 'operate', width: '80px', sortable: false}
+            ]
+        } );
+    }
+
+
+    //行数据结构
+    function TData(orderId,orderNumber,orderTradingTimeDetail,orderTradingTimeYear,orderProvince, orderProductTotalPrice, orderProductType,orderProductNumbers,orderStatus) {
+        this.orderNumber = orderNumber;
+        this.orderTime = orderTradingTimeYear+"-"+orderTradingTimeDetail;
+        this.orderProvince = orderProvince;
+        this.orderProductTotalPrice = orderProductTotalPrice;
+        this.orderProductType = orderProductType;
+        this.orderProductNumbers = orderProductNumbers;
+        this.orderStatus = orderStatus==1?"<span class=\"label label-defaunt radius\">已退款</span>":"<span class=\"label label-success radius\">待退款</span>";
+        this.operate = function () {
+            return "<a   title=\"退款\" class='btn btn-xs btn-info'  " +
+                "onclick='backMoney(\"" + orderId + "\")'><i class=\"fa fa-edit bigger-120\"></i></a>&nbsp;" +
+                "<a title=\"删除\"  onclick='deleteOrder(\"" + orderId + "\")' class='btn btn-xs btn-warning'><i class=\"fa fa-trash  bigger-120\"></i></a>";
+        }
+    }
+
+
+    function backMoney(orderId) {
+        layer.confirm('确认要退款吗？',function(index){
+            $.ajax({
+                url:"/api/order/backMoney/"+orderId,
+                type:"put",
+                success:function (info) {
+                    if(info.status==200){
+                        initOrderBackMoneyList(10)
+                        layer.msg(info.message,{icon:1,time:1000});
+                    }
+                }
+            })
+        });
+    }
+
+
+    /*订单-删除*/
+    function deleteOrder(orderId){
+        layer.confirm('确认要删除吗？',function(index){
+            $.ajax({
+                url:"/api/order/"+orderId,
+                type:"delete",
+                success:function (info) {
+                    if(info.status==200){
+                        initOrderBackMoneyList(10)
+                        layer.msg(info.message,{icon:1,time:1000});
+                    }
+                }
+            })
+        });
+    }
+
+
+</script>

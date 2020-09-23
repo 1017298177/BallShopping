@@ -1,0 +1,16 @@
+<div class="tab-header">
+    <div class="inner">
+        <div class="pull-left">
+            <div class="pull-left">嗨，欢迎来到<span class="cr">球途网</span></div>
+            <a href="#">帮助中心</a>
+        </div>
+        <div class="pull-right">
+            <a shiro:notAuthenticated="" href="/shopping/login"><span class="cr">登录</span></a>
+            <a shiro:notAuthenticated="" href="/shopping/register">注册</a>
+            <a shiro:authenticated="" href="javascript:;"><span shiro:principal property="realName"></span></a>
+            <a shiro:authenticated="" href="/api/logout?flag=1">退出登录</a>
+            <a href="/shopping/profile/profileWelcome">我的球途</a>
+            <a href="/shopping/profile/profileOrder">我的订单</a>
+        </div>
+    </div>
+</div>

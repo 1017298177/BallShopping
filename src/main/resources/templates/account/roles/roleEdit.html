@@ -1,0 +1,39 @@
+<!--添加管理员-->
+<div id="editRoleModal" class="modal fade bs-example-modal-lg"
+     tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">修改信息</h4>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form  id="form-admin-add">
+                    <input type="hidden" id="hiddenRoleId">
+                    <div class="form-group">
+                        <label class="form-label"><span class="c-red">*</span>角色名称：</label>
+                        <div class="formControls">
+                            <input type="text"  class="input-text" value="" placeholder="" id="roleNameEdit" name="roleName" datatype="*2-16" nullmsg="角色名称不能为空">
+                        </div>
+                        <div class="col-4"> <span class="Validform_checktip"></span></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                <button id="editRoleBtn" type="button" class="btn btn-primary" data-dismiss="modal">保存</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+<div id="add_administrator_style" class="add_menber" style="display:none">
+
+</div>

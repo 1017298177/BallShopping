@@ -1,0 +1,234 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link href="/assets/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="/assets/css/font-awesome.min.css"/>
+    <!--[if IE 7]>
+    <link rel="stylesheet" href="/assets/css/font-awesome-ie7.min.css"/>
+    <![endif]-->
+    <link rel="stylesheet" href="/assets/css/ace.min.css"/>
+    <link rel="stylesheet" href="/assets/css/ace-rtl.min.css"/>
+    <link rel="stylesheet" href="/assets/css/ace-skins.min.css"/>
+    <link rel="stylesheet" href="/css/style.css"/>
+    <!--[if lte IE 8]>
+    <link rel="stylesheet" href="/assets/css/ace-ie.min.css"/>
+    <![endif]-->
+    <script src="/assets/js/ace-extra.min.js"></script>
+    <!--[if lt IE 9]>
+    <script src="/assets/js/html5shiv.js"></script>
+    <script src="/assets/js/respond.min.js"></script>
+    <![endif]-->
+    <script src="/js/jquery-1.9.1.min.js"></script>
+    <script src="/assets/layer/layer.js" type="text/javascript"></script>
+    <title>登录</title>
+</head>
+
+<body class="login-layout Reg_log_style">
+<div class="logintop">
+    <span>商城后台管理系统</span>
+    <ul>
+        <li><a href="/account/index">返回首页</a></li>
+        <li><a href="#">帮助</a></li>
+        <li><a href="#">关于</a></li>
+    </ul>
+</div>
+<div class="loginbody">
+    <div class="login-container">
+        <div class="center">
+        </div>
+        <div class="space-6"></div>
+        <div class="position-relative">
+            <div id="login-box" class="login-box widget-box no-border visible">
+                <div class="widget-body">
+                    <div class="widget-main">
+                        <h4 class="header blue lighter bigger">
+                            <i class="icon-coffee green"></i>
+                            管理员登录
+                        </h4>
+                        <div class="login_icon"><img src="/images/login.png"/></div>
+                        <form class="">
+                            <fieldset>
+                                <ul>
+                                    <li class="frame_style form_error"><label class="user_icon"></label><input
+                                            type="text" id="username"/><i>用户名</i></li>
+                                    <li class="frame_style form_error"><label class="password_icon"></label><input
+                                            type="password" id="password"/><i>密码</i></li>
+                                    <li class="frame_style form_error"><label class="Codes_icon"></label>
+                                        <input type="text" id="Codes_text"/>
+                                        <i>验证码</i>
+                                        <div class="Codes_region" style="width: 100px">
+                                            <canvas id="canvas" width="100" height="36"></canvas>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <div class="space"></div>
+
+                                <div class="clearfix">
+                                    <label class="inline">
+                                        <input type="checkbox" id="rememberMe" class="ace">
+                                        <span class="lbl">记住我(3天内有效)</span>
+                                    </label>
+                                    <button type="button" class="width-35 pull-right btn btn-sm btn-primary"
+                                            id="login_btn">
+                                        <i class="icon-key"></i>
+                                        登录
+                                    </button>
+                                </div>
+
+                                <div class="space-4"></div>
+                            </fieldset>
+                        </form>
+
+                        <div class="social-or-login center">
+                            <span class="bigger-110">通知</span>
+                        </div>
+
+                        <div class="social-login center">
+
+                        </div>
+                    </div><!-- /widget-main -->
+
+                    <div class="toolbar clearfix">
+
+
+                    </div>
+                </div><!-- /widget-body -->
+            </div><!-- /login-box -->
+        </div><!-- /position-relative -->
+    </div>
+</div>
+<div id="time" class="loginbm"></div>
+<strong></strong>
+</body>
+</html>
+<script>
+
+    function currentTime(){
+        var d=new Date(),str='';
+        str+=d.getFullYear()+'年';
+        str+=d.getMonth() + 1+'月';
+        str+=d.getDate()+'日';
+        str+=d.getHours()+'时';
+        str+=d.getMinutes()+'分';
+        str+= d.getSeconds()+'秒';
+        return str;
+    }
+    setInterval(function(){$('#time').html(currentTime)},1000);
+
+    $("#login_btn").click(function () {
+        var code = $("#Codes_text").val();
+        var num = show_num.join("");
+        if (code == "") {
+            layer.msg("请输入验证码", {icon: 0});
+            return;
+        } else if (code != num) {
+            layer.msg("验证码错误", {icon: 0});
+            return;
+        }
+        var userInfo = {};
+        userInfo.userName = $("#username").val();
+        userInfo.password = $("#password").val();
+         userInfo.rememberMe = $("#rememberMe").prop("checked");
+        $.ajax({
+            url: "/api/userInfo",
+            contentType: "application/json",
+            data: JSON.stringify(userInfo),
+            type: "post",
+            success: function (info) {
+                if (info.status == 200) {
+                    $("#username").val("");
+                    $("#password").val("");
+                    layer.msg(info.message, {icon: 1, time: 1000})
+                    location.href = "/account/index"
+                } else {
+                    layer.msg(info.message, {icon: 3, time: 1000})
+                }
+            }
+        })
+    })
+    show_num = [];
+    $(document).ready(function () {
+        draw(show_num);
+        $("#canvas").on('click', function () {
+            draw(show_num);
+        });
+
+        $("input[type='text'],input[type='password']").blur(function () {
+            var $el = $(this);
+            var $parent = $el.parent();
+            $parent.attr('class', 'frame_style').removeClass(' form_error');
+            if ($el.val() == '') {
+                $parent.attr('class', 'frame_style').addClass(' form_error');
+            }
+        });
+        $("input[type='text'],input[type='password']").focus(function () {
+            var $el = $(this);
+            var $parent = $el.parent();
+            $parent.attr('class', 'frame_style').removeClass(' form_errors');
+            if ($el.val() == '') {
+                $parent.attr('class', 'frame_style').addClass(' form_errors');
+            } else {
+                $parent.attr('class', 'frame_style').removeClass(' form_errors');
+            }
+        });
+    })
+
+
+    //动态验证码
+    function draw(show_num) {
+        var canvas_width = $('#canvas').width();
+        var canvas_height = $('#canvas').height();
+        var canvas = document.getElementById("canvas");//获取到canvas的对象，演员
+        var context = canvas.getContext("2d");//获取到canvas画图的环境，演员表演的舞台
+        canvas.width = canvas_width;
+        canvas.height = canvas_height;
+        var sCode = "A,B,C,E,F,G,H,J,K,L,M,N,P,Q,R,S,T,W,X,Y,Z,1,2,3,4,5,6,7,8,9,0";
+        var aCode = sCode.split(",");
+        var aLength = aCode.length;//获取到数组的长度
+
+        for (var i = 0; i <= 3; i++) {
+            var j = Math.floor(Math.random() * aLength);//获取到随机的索引值
+            var deg = Math.random() * 30 * Math.PI / 180;//产生0~30之间的随机弧度
+            var txt = aCode[j];//得到随机的一个内容
+            show_num[i] = txt.toLowerCase();
+            var x = 10 + i * 20;//文字在canvas上的x坐标
+            var y = 20 + Math.random() * 8;//文字在canvas上的y坐标
+            context.font = "bold 23px 微软雅黑";
+
+            context.translate(x, y);
+            context.rotate(deg);
+
+            context.fillStyle = randomColor();
+            context.fillText(txt, 0, 0);
+
+            context.rotate(-deg);
+            context.translate(-x, -y);
+        }
+        for (var i = 0; i <= 5; i++) { //验证码上显示线条
+            context.strokeStyle = randomColor();
+            context.beginPath();
+            context.moveTo(Math.random() * canvas_width, Math.random() * canvas_height);
+            context.lineTo(Math.random() * canvas_width, Math.random() * canvas_height);
+            context.stroke();
+        }
+        for (var i = 0; i <= 30; i++) { //验证码上显示小点
+            context.strokeStyle = randomColor();
+            context.beginPath();
+            var x = Math.random() * canvas_width;
+            var y = Math.random() * canvas_height;
+            context.moveTo(x, y);
+            context.lineTo(x + 1, y + 1);
+            context.stroke();
+        }
+    }
+
+    function randomColor() {//得到随机的颜色值
+        var r = Math.floor(Math.random() * 256);
+        var g = Math.floor(Math.random() * 256);
+        var b = Math.floor(Math.random() * 256);
+        return "rgb(" + r + "," + g + "," + b + ")";
+    }
+
+</script>

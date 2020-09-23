@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+    <meta charset="UTF-8">
+    <link rel="shortcut icon" href="/shop/favicon.ico">
+    <link rel="stylesheet" href="/shop/css/iconfont.css">
+    <link rel="stylesheet" href="/shop/css/global.css">
+    <link rel="stylesheet" href="/shop/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/shop/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="/shop/css/swiper.min.css">
+    <link rel="stylesheet" href="/shop/css/styles.css">
+    <script src="/shop/js/jquery.1.12.4.min.js" charset="UTF-8"></script>
+    <script src="/shop/js/bootstrap.min.js" charset="UTF-8"></script>
+    <script src="/shop/js/swiper.min.js" charset="UTF-8"></script>
+    <script src="/shop/js/global.js" charset="UTF-8"></script>
+    <script src="/shop/js/jquery.DJMask.2.1.1.js" charset="UTF-8"></script>
+    <script src="/assets/layer/layer.js" type="text/javascript"></script>
+    <title>球途网</title>
+</head>
+<body>
+
+<!-- 顶部tab -->
+<div th:replace="/shopping/fragments/header"></div>
+<!-- 顶部tab -->
+
+<!-- 顶部标题 -->
+<div class="bgf5 clearfix">
+    <div class="top-user">
+        <div class="inner">
+            <a class="logo" href="/shopping/index"><img style="width: 200px;height: 70px;margin-top: 20px" src="/shop/images/icons/logo.jpg" alt="球途网" class="cover"></a>
+            <div class="title">购物车</div>
+        </div>
+    </div>
+</div>
+<div class="content clearfix bgf5">
+    <section class="user-center inner clearfix">
+        <div class="user-content__box clearfix bgf">
+            <div class="title">购物车</div>
+            <form class="shopcart-form__box">
+                <input type="hidden" id="hiddenBeforeValue">
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th width="150">
+                            <label class="checked-label"><input type="checkbox" class="check-all"><i></i> 全选</label>
+                        </th>
+                        <th width="300">商品信息</th>
+                        <th width="150">单价</th>
+                        <th width="200">数量</th>
+                        <th width="200">总价</th>
+                        <th width="80">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tbody1">
+                    </tbody>
+                </table>
+                <div class="user-form-group tags-box  pull-right">
+                    <a href="javascript:;" onclick="submitOrder()" class="btn " style="color: white">提交订单</a>
+                </div>
+                <div class="checkbox shopcart-total">
+                    <div class="pull-right">
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;合计（不含运费）
+                        <b class="cr">¥<span class="fz24" id="sum">0.00</span></b>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+</div>
+<!-- 右侧菜单 -->
+<div th:replace="/shopping/fragments/right"></div>
+<!-- 右侧菜单 -->
+
+<!-- 底部信息 -->
+<div th:replace="/shopping/fragments/foot"></div>
+<!-- 底部信息 -->
+</body>
+
+<script>
+    $(document).ready(function () {
+        initShoppingCart();
+    });
+
+
+    function initShoppingCart(){
+        $.ajax({
+            url: "/api/shoppingCarts",
+            type: "get",
+            success: function (info) {
+                var html = "";
+                for (var i = 0; i < info.length; i++) {
+                    html += " <tr>\n" +
+                        " <th scope=\"row\"><label class=\"checked-label\"><input   name='checkedProduct' value='"+info[i].productId+"'  type='checkbox'><i> </i>\n" +
+                        " <div class=\"img\"><img style='width: 130px;height: 80px' src='"+info[i].productMainimage+"' alt=\"\" class=\"cover\"></div>\n" +
+                        " </label>\n" +
+                        " </th>\n" +
+                        " <td>\n" +
+                        " <div class=\"name ep3\">"+info[i].productTitle+"</div>\n" +
+                        " </td>\n" +
+                        " <td>"+info[i].productPrice+"</td>\n" +
+                        " <td>\n" +
+                        " <div class=\"cart-num__box\">\n" +
+                        " <input type=\"button\" class=\"sub\" value=\"-\">\n" +
+                        " <input type=\"text\" class=\"val\" value='"+info[i].productNumber+"' maxlength=\"2\">\n" +
+                        " <input type='button' class=\"add\" value=\"+\">\n" +
+                        " </div>\n" +
+                        " </td>\n" +
+                        " <td>"+info[i].productTotalPrice+"</td>\n" +
+                        " <td><a  href='javascript:;'  onclick=\"deleteProductItem(\'"+info[i].productId+"\')\" >删除</a></td>\n" +
+                        " </tr>";
+                }
+                $("tbody").html(html);
+                var $item_checkboxs = $('.shopcart-form__box tbody input[type="checkbox"]'),
+                    $check_all = $('.check-all');
+                $item_checkboxs.on("click",function () {
+                     checkedProduct(this,"one");
+                })
+                $check_all.on("click",function () {
+                    checkedProduct(this,"all");
+                })
+                // 全选
+                $check_all.on('change', function() {
+                    $check_all.prop('checked', $(this).prop('checked'));
+                    $item_checkboxs.prop('checked', $(this).prop('checked'));
+                });
+                // 点击选择
+                $item_checkboxs.on('change', function() {
+                    var flag = true;
+                    $item_checkboxs.each(function() {
+                        if (!$(this).prop('checked')) { flag = false }
+                    });
+                    $check_all.prop('checked', flag);
+                });
+                addAndDec();
+            }
+        })
+    }
+
+
+    function checkedProduct(object,flag) {
+        if(flag=="one"){
+            var temp = object.checked;
+            var sum = 0;
+            if(temp==true){
+                var totalPrice = $(object).parent().parent().parent().find("td").eq(3).text();
+                sum = Number($("#sum").text());
+                sum += Number(totalPrice);
+                $("#sum").text(sum)
+            }else {
+                var totalPrice = $(object).parent().parent().parent().find("td").eq(3).text();
+                sum = Number($("#sum").text());
+                sum -= Number(totalPrice);
+                $("#sum").text(sum)
+            }
+        }else if(flag=="all"){
+            var temp = object.checked;
+            var sum = 0;
+            var checkedProducts = $("input[name='checkedProduct']");
+            if(temp==true){
+                for (var i = 0; i <checkedProducts.length ; i++) {
+                    if(checkedProducts[i].checked==false){
+                        var totalPrice = checkedProducts.eq(i).parent().parent().parent().find("td").eq(3).text();
+                        sum = Number($("#sum").text());
+                        sum += Number(totalPrice);
+                        $("#sum").text(sum)
+                    }
+                }
+            }else {
+                $("#sum").text("0.00") ;
+            }
+        }
+    }
+
+    function addAndDec() {
+        // 个数限制输入数字
+        $('input.val').onlyReg({reg: /[^0-9.]/g});
+        // 加减个数
+        $('.cart-num__box').on('click', '.sub,.add', function () {
+            var value = parseInt($(this).siblings('.val').val());
+            if ($(this).hasClass('add')) {
+                $(this).siblings('.val').val(Math.min((value += 1), 99));
+                var valueAdd = parseInt($(this).siblings('.val').val());
+                var price =  $(this).parent().parent().parent().children("td").eq(1).text()
+                var totalPrice = Number(price)*Number(valueAdd)
+                $(this).parent().parent().parent().children("td").eq(3).text(totalPrice);
+                var temp =$(this).parent().parent().parent().find("th input")[0];
+                if(temp.checked==true){
+                    var sum = 0;
+                    var price = $(temp).parent().parent().parent().children("td").eq(1).text();
+                    sum = Number($("#sum").text());
+                    sum += Number(price);
+                    $("#sum").text(sum)
+                }
+            } else {
+               var before =  $(this).parent().parent().parent().children("td").eq(2).children("div").children("input").eq(1);
+               $("#hiddenBeforeValue").val(before[0].value);
+               $(this).siblings('.val').val(Math.max((value -= 1), 1));
+                var valueDec = parseInt($(this).siblings('.val').val());
+                var price =  $(this).parent().parent().parent().children("td").eq(1).text()
+                var totalPrice = Number(price)*Number(valueDec)
+                $(this).parent().parent().parent().children("td").eq(3).text(totalPrice);
+                var temp =$(this).parent().parent().parent().find("th input")[0];
+                if(temp.checked==true){
+                    if(Number($("#hiddenBeforeValue").val())>1){
+                        var sum = 0;
+                        var price = $(temp).parent().parent().parent().children("td").eq(1).text();
+                        sum = Number($("#sum").text());
+                        sum -= Number(price);
+                        $("#sum").text(sum);
+                    }
+                }
+            }
+        });
+    }
+
+    function  sum() {
+        var trs = $("#tbody1").children("tr");
+        var sum = 0;
+        for (var i = 0; i <trs.length; i++) {
+            var value =  trs.eq(i).children("td").eq(3).text()
+            sum +=Number(value);
+        }
+        $("#sum").text(sum)
+    }
+
+    function deleteProductItem(productId) {
+        $.ajax({
+            url:"/api/shoppingCart/"+productId,
+            type:"delete",
+            success:function (info) {
+                if(info.status ==200){
+                    layer.msg(info.message,{icon:1,time:800});
+                    setTimeout(function () {
+                         initShoppingCart()
+                    },800)
+                }
+            }
+        })
+    }
+
+    function submitOrder() {
+        var checkedProducts = $("input[name='checkedProduct']:checked");
+        if(checkedProducts.length==0){
+            layer.msg('请选择商品', {icon: 0, time: 500})
+            return;
+        }
+        var cart = {};
+        var array = new Array();
+        for (var i = 0; i < checkedProducts.length ; i++) {
+            var shoppingCart = {};
+            var parent = checkedProducts.eq(i).parent().parent().parent();
+            shoppingCart.productId = checkedProducts.eq(i).val();
+            shoppingCart.productNumber = parent.children("td").eq(2).children("div").children("input").eq(1).val();
+            shoppingCart.productTotalPrice = parent.children("td").eq(3).text();
+            array.push(shoppingCart);
+        }
+        cart.items = array;
+        $.ajax({
+            url:"/api/shoppingCartSubmit",
+            type:"post",
+            contentType:"application/json",
+            data:JSON.stringify(cart),
+            success:function (info) {
+                if(info.status ==200){
+                    layer.msg(info.message,{icon:1,time:700});
+                    setTimeout(function () {
+                        location.href="/shopping/productPay?orderNumber="+info.data;
+                    },700)
+                }
+            }
+        })
+    }
+
+</script>
+
+</html>

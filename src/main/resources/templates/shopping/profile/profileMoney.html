@@ -1,0 +1,81 @@
+<div class="pull-right">
+    <div class="user-content__box clearfix bgf">
+        <div class="title">账户信息-资金管理</div>
+        <div class="assets-box">
+            <samll class="c6">账户余额：</samll>
+            <samll class="cr">¥</samll>
+            <b class="fz16 cr" id="money">0.0</b>
+            <ul class="nav pull-right" role="tablist">
+                <li role="presentation" class="active"><a href="#add" aria-controls="add" role="tab" data-toggle="tab">充值</a></li>
+            </ul>
+        </div>
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade in active" id="add">
+                <form  class="user-setting__form" role="form">
+                    <div class="form-group">
+                        <label for="add-money">充值金额</label>
+                        <input id="add-money" class="assets-control" placeholder="输入您要充值的金额" type="text">
+                    </div>
+                    <div class="form-group">
+                        <label >支付方式（手续费 <span id="tip">0</span>）</label>
+                        <div class="pay-method-box tags-box">
+                            <label><input type="radio" onclick="showMoney('支付宝')" name="pay_method" value="支付宝"><i class="pay-method__img alipay"></i></label>
+                            <label><input type="radio" onclick="showMoney('微信')" name="pay_method" value="微信"><i class="pay-method__img wechat"></i></label>
+                        </div>
+                    </div>
+                    <div class="user-form-group tags-box">
+                        <button type="button" onclick="addMoney()" class="btn ">立即充值</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function showMoney(temp) {
+        $.ajax({
+            url: "/api/cardInfo/"+temp,
+            type: "get",
+            success: function (info) {
+               $("#money").text(info)
+            }
+        })
+    }
+
+    function addMoney() {
+        var cardInfo = {};
+        cardInfo.cardName = $("input[name='pay_method']:checked").val();
+        if(cardInfo.cardName==""||cardInfo.cardName==null){
+            layer.msg('请选择支付方式', {icon: 0, time: 500})
+            return;
+        }
+        var addMoney = 0 ;
+        if( $("#money").text()!="0.0"){
+           addMoney = Number( $("#money").text())+Number($("#add-money").val());
+        }else {
+            addMoney =  $("#add-money").val();
+            cardInfo.flag = "0.0";
+        }
+        cardInfo.cardMoney = addMoney;
+        $.ajax({
+            url: "/api/cardInfo",
+            type: "post",
+            data: JSON.stringify(cardInfo),
+            contentType: "application/json",
+            success: function (info) {
+                if (info.status == 200) {
+                    layer.msg(info.message, {icon: 1, time: 500})
+                    $("#add-money").val("");
+                    $("#money").text(info.data)
+                } else {
+                    layer.alert(info.message, {icon: 0, time: 500})
+                }
+            }
+        })
+
+    }
+
+</script>
